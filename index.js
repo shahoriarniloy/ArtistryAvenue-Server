@@ -67,6 +67,14 @@ async function run() {
     const database = client.db("artsDB");
     const artsCollection =database.collection("arts");
 
+
+    app.get('/arts',async(req,res)=>{
+        const cursor = artsCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+    
+    })
+
     
     app.post('/arts',async(req,res)=>{
         const newArts= req.body;
@@ -96,10 +104,7 @@ app.get('/',(req,res)=>{
 });
 
 
-app.get('/arts',(req,res)=>{
-    res.send(arts);
 
-})
 
 
 app.listen(port,()=>{
