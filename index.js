@@ -66,12 +66,23 @@ async function run() {
 
     const database = client.db("artsDB");
     const artsCollection =database.collection("arts");
+    const subCategoryCollection =database.collection("sub_categories");
+
     const userCollection = client.db('artsDB').collection('arts');
 
 
     app.get('/arts',async(req,res)=>{
         const cursor = artsCollection.find();
         const result = await cursor.toArray();
+        res.send(result);
+    
+    })
+
+    app.get('/subcategory',async(req,res)=>{
+        const cursor = subCategoryCollection.find();
+        const result = await cursor.toArray();
+        console.log(result);
+
         res.send(result);
     
     })
@@ -139,6 +150,7 @@ async function run() {
         const art =await userCollection.findOne(query);
         res.send(art);
     })
+    
     
     
     
