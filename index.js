@@ -99,6 +99,32 @@ async function run() {
         }
     });
 
+
+    app.put('/arts/:id',async(req,res)=>{
+        const id =req.params.id;
+        const art = req.body;
+        // console.log(id, updatedArt);
+        const filter = {_id:new ObjectId(id)}
+        const options = {upsert:true}
+        const updatedArt = {
+            $set:{
+                image:art.image,
+                item_name:art.item_name,
+                subcategory_Name:art.subcategory_Name,
+                short_description:art.short_description,
+                price:art.price,
+                rating:art.rating,
+                customization:art.customization,
+                processing_time:art.processing_time,
+                stockStatus:art.stockStatus,
+                user_email:art.user_email,
+                user_name:art.user_name
+            }            
+        }
+        const result = await userCollection.updateOne(filter, updatedArt, options);
+        res.send(result);
+    })
+
     app.delete('/userarts/:id', async (req, res) => {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) }; 
@@ -106,6 +132,13 @@ async function run() {
         res.json(result);
        
     });
+
+    app.get('/userart/:id', async(req,res)=>{
+        const id= req.params.id;
+        const query = {_id: new ObjectId(id)};
+        const art =await userCollection.findOne(query);
+        res.send(art);
+    })
     
     
     
