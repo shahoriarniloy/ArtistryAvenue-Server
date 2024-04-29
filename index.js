@@ -47,7 +47,7 @@ const arts =[
 
 
   
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = "mongodb+srv://niloyshahoriar:WcBAHfnEVRLwhjm7@cluster0.dxgrzuk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -66,6 +66,7 @@ async function run() {
 
     const database = client.db("artsDB");
     const artsCollection =database.collection("arts");
+    const userCollection = client.db('artsDB').collection('arts');
 
 
     app.get('/arts',async(req,res)=>{
@@ -79,12 +80,35 @@ async function run() {
     app.post('/arts',async(req,res)=>{
         const newArts= req.body;
         newArts.id = arts.length+1;
-        // arts.push(newArts);
-        // res.send(newArts);
         result = await artsCollection.insertOne(newArts);
         res.send(result);
     });
 
+   
+
+    app.get('/userArts', async (req, res) => {
+        try {
+            const userEmail = req.query.email; 
+            const query = { user_email: userEmail }; 
+            const userArts = await artsCollection.find(query).toArray(); 
+            // console.log(`UserArts:`,userArts);
+            res.json(userArts); 
+        } catch (error) {
+            console.error('Error fetching:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
+    app.delete('/userarts/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }; 
+        const result = await userCollection.deleteOne(query);
+        res.json(result);
+       
+    });
+    
+    
+    
 
 
 
