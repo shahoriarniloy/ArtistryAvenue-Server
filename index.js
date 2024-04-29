@@ -150,6 +150,21 @@ async function run() {
         const art =await userCollection.findOne(query);
         res.send(art);
     })
+
+   
+    app.get('/subcategory/arts/:name', async (req, res) => {
+        const subcategory = req.params.name;
+        console.log(subcategory);
+    
+       
+            const filteredArts = await artsCollection.find({ subcategory_Name: subcategory }).toArray();
+    
+            res.json(filteredArts);
+       
+      
+    });
+    
+    
     
     
     
