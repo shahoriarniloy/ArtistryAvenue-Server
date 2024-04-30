@@ -54,7 +54,9 @@ const uri = "mongodb+srv://niloyshahoriar:WcBAHfnEVRLwhjm7@cluster0.dxgrzuk.mong
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
-    strict: true,
+    // strict: true,
+    strict: false,
+
     deprecationErrors: true,
   }
 });
@@ -163,6 +165,19 @@ async function run() {
        
       
     });
+
+    app.get('/users', async (req, res) => {
+        try {
+            const users = await artsCollection.find({}, { _id: 0, user_name: 1, user_email: 1 }).toArray();
+            console.log(users);
+            res.json(users);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+    
+    
     
     
     
