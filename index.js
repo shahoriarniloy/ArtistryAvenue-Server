@@ -69,6 +69,8 @@ async function run() {
     const database = client.db("artsDB");
     const artsCollection =database.collection("arts");
     const subCategoryCollection =database.collection("sub_categories");
+    const reviewsCollection =database.collection("reviews");
+
 
     const userCollection = client.db('artsDB').collection('arts');
 
@@ -176,6 +178,21 @@ async function run() {
             res.status(500).json({ error: 'Internal server error' });
         }
     });
+
+     
+    app.post('/reviews',async(req,res)=>{
+        const newReviews= req.body;
+        result = await reviewsCollection.insertOne(newReviews);
+        res.send(result);
+    });
+
+    app.get('/reviews',async(req,res)=>{
+        const cursor = reviewsCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+    
+    })
+
     
     
     
