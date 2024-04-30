@@ -1,54 +1,51 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+// After app is initialized
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*'); // Or set it to specific origins as needed
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+  });
+  
 
-app.use(cors());
-app.use(express.json());
+// app.use(
+//     cors({
+//         origin: ['http://localhost:5173', 'https://artistryavenue-2aebe.web.app'],
+//         credentials: true,
+//     }),
+//   )
 
+//   const corsOptions = {
+//     origin: ['http://localhost:5173', 'https://artistryavenue-2aebe.web.app'],
+//     credentials: true,
+//     optionSuccessStatus: 200,
+//     }
+//     app.use(cors(corsOptions))
 
-const arts =[
-    {
-      id: 1,
-      image: "https://i.ibb.co/wJKT9vL/48a8b088688ac81138c2742a3805451e.jpg",
-      item_name: "Mountain View Canvas",
-      subcategory_Name: "Landscape Painting",
-      short_description: "Beautiful canvas depicting a serene mountain landscape.",
-      price: "$100",
-      rating: 4.6,
-      customization: "Yes",
-      processing_time: "2-3 weeks"
-    },
-    {
-      id: 2,
-      image: "https://i.ibb.co/x8sg6cG/7c50eaa84e8a3a176013d6e3c4d66bc8.jpg",
-      item_name: "Forest Based Landscape Painting",
-      subcategory_Name: "Landscape Painting",
-      short_description: "Captivating painting capturing the tranquility of a forest landscape.",
-      price: "$120",
-      rating: 4.8,
-      customization: "Yes",
-      processing_time: "3-4 weeks"
-    },
-    {
-      id: 3,
-      image: "https://i.ibb.co/McRb1VM/9793776abf41959dfc00a3f9e477580a.jpg",
-      item_name: "Pencil Sketch Portrait",
-      subcategory_Name: "Portrait Drawing",
-      short_description: "Detailed pencil sketch capturing the essence of the subject.",
-      price: "$80",
-      rating: 4.5,
-      customization: "Yes",
-      processing_time: "1-2 weeks"
-    },
-  ];
+// app.use(cors());
+// app.use(express.json());
+
+// CORS options
+// const corsOptions = {
+//     origin: ['http://localhost:5173', 'https://artistryavenue-2aebe.web.app'],
+//     credentials: true,
+//     optionSuccessStatus: 200,
+//   };
+  
+//   app.use(cors(corsOptions));
+  app.use(express.json());
+
 
 
 
   
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const uri = "mongodb+srv://niloyshahoriar:WcBAHfnEVRLwhjm7@cluster0.dxgrzuk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dxgrzuk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -64,7 +61,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const database = client.db("artsDB");
     const artsCollection =database.collection("arts");
@@ -91,10 +88,9 @@ async function run() {
     
     })
 
-    
-    app.post('/arts',async(req,res)=>{
+ app.post('/arts',async(req,res)=>{
         const newArts= req.body;
-        newArts.id = arts.length+1;
+        console.log(newArts);
         result = await artsCollection.insertOne(newArts);
         res.send(result);
     });
@@ -193,19 +189,9 @@ async function run() {
     
     })
 
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-
+ 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
